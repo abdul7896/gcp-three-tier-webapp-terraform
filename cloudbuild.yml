@@ -1,9 +1,9 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/myapplication-348521/instance-two',]
+  args: ['build', '-t', 'gcr.io/myapplication-348521/instance-two','.' , '-f', 'Dockerfile']
   - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/myapplication-348521/instance-one',]
+  args: ['build', '-t', 'gcr.io/myapplication-348521/instance-one','.' , '-f', 'Dockerfile']
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/myapplication-348521/instance-two']
