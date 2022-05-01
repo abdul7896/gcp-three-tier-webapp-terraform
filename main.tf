@@ -63,7 +63,7 @@ resource "google_compute_instance" "vm_instance" {
 curl -fsSL https://get.docker.com -o get-docker.sh && 
 sudo sh get-docker.sh && 
 sudo service docker start && 
-sudo docker run -p 8080:80 -d nginxdemos/hello
+sudo docker run -p 8080:8080 -d gcr.io/myapplication-348521/instance-one:latest
 EOT
    
   network_interface {
@@ -76,7 +76,7 @@ EOT
 }
 
 
-#Instance 2
+#Instance Two
 resource "google_compute_instance" "vm_instance2" {
   name         = "nginx-instance2"
   machine_type = var.machine_type
@@ -85,15 +85,15 @@ resource "google_compute_instance" "vm_instance2" {
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-1804-bionic-v20220331a"
+      image = var.image
     }
   }
 
       metadata_startup_script = <<EOT
-sudo sh get-docker.sh && 
 curl -fsSL https://get.docker.com -o get-docker.sh && 
+sudo sh get-docker.sh && 
 sudo service docker start && 
-sudo docker run -p 8080:80 -d nginxdemos/hello
+sudo docker run -p 8080:8080 -d gcr.io/myapplication-348521/instance-two:latest
 EOT
 
   network_interface {
@@ -212,6 +212,20 @@ resource "google_compute_firewall" "load_balancer_inbound" {
 }
 
 
+#DB
+resource "google_sql_database" "database" {
+  name     = "my-database"
+  instance = google_sql_database_instance.instance.name
+}
 
+# See versions at https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#database_version
+resource "google_sql_database_instance" "instance" {
+  name             = "my-database-instance"
+  region           = "us-central1"
+  database_version = "MYSQL_8_0"
+  settings {
+    tier = "db-f1-micro"
+  }
 
-
+  deletion_protection  = "true"
+}

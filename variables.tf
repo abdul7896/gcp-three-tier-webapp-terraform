@@ -31,13 +31,13 @@ variable "name" {
 variable "machine_type" {
   description = "GCP VM instance machine type."
   type        = string
-  default     = "f1-micro"
+  default     = "e2-medium"
 }
 
 variable "image" {
   description = "GCP machine image"
   type        = string
-  default     = "centos-7-v20210420"
+  default     = "ubuntu-minimal-1804-bionic-v20220427"
 }
 
 variable "labels" {
