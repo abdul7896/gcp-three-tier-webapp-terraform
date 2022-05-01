@@ -1,16 +1,12 @@
-locals {
-  project_id = "myapplication-348521"
-}
-
 provider "google" {
-  project = local.project_id
-  region  = "us-central1"
-  zone    = "us-central1-b"
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
 }
 
 resource "google_project_service" "compute_service" {
-  project = local.project_id
-  service = "compute.googleapis.com"
+  project = var.project_id
+  service = var.service
 }
 
 resource "google_compute_network" "vpc_network" {
@@ -53,29 +49,29 @@ resource "google_compute_router_nat" "nat" {
 #instance One
 resource "google_compute_instance" "vm_instance" {
   name         = "nginx-instance"
-  machine_type = "e2-medium"
+  machine_type = var.machine_type
 
   tags = ["nginx-instance"]
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-1804-bionic-v20220331a"
+      image = var.image
     }
   }
 
-  metadata_startup_script = <<EOT
+    metadata_startup_script = <<EOT
 curl -fsSL https://get.docker.com -o get-docker.sh && 
 sudo sh get-docker.sh && 
 sudo service docker start && 
 sudo docker run -p 8080:80 -d nginxdemos/hello
 EOT
-
+   
   network_interface {
     network = google_compute_network.vpc_network.self_link
     subnetwork = google_compute_subnetwork.private_network.self_link    
-    # access_config {
-    #   network_tier = "STANDARD"
-    # }
+    access_config {
+      network_tier = "STANDARD"
+    }
   }
 }
 
@@ -83,7 +79,7 @@ EOT
 #Instance 2
 resource "google_compute_instance" "vm_instance2" {
   name         = "nginx-instance2"
-  machine_type = "e2-medium"
+  machine_type = var.machine_type
 
   tags = ["nginx-instance"]
 
@@ -93,9 +89,9 @@ resource "google_compute_instance" "vm_instance2" {
     }
   }
 
-  metadata_startup_script = <<EOT
-curl -fsSL https://get.docker.com -o get-docker.sh && 
+      metadata_startup_script = <<EOT
 sudo sh get-docker.sh && 
+curl -fsSL https://get.docker.com -o get-docker.sh && 
 sudo service docker start && 
 sudo docker run -p 8080:80 -d nginxdemos/hello
 EOT
@@ -103,9 +99,9 @@ EOT
   network_interface {
     network = google_compute_network.vpc_network.self_link
     subnetwork = google_compute_subnetwork.private_network.self_link    
-    # access_config {
-    #   network_tier = "STANDARD"
-    # }
+    access_config {
+      network_tier = "STANDARD"
+    }
   }
 }
 
