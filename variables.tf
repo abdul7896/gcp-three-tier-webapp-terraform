@@ -37,10 +37,26 @@ variable "machine_type" {
 variable "image" {
   description = "GCP machine image"
   type        = string
-  default     = "ubuntu-minimal-1804-bionic-v20220427"
+  default     = "centos-7-v20210420"
 }
 
 variable "labels" {
   description = "List of labels to attach to the VM instance."
   type        = map
+}
+variable "tier" {
+  description = "The tier for the master instance."
+  type        = string
+  default     = "db-n1-standard-1"
+}
+variable "activation_policy" {
+  description = "The activation policy for the master instance. Can be either `ALWAYS`, `NEVER` or `ON_DEMAND`."
+  type        = string
+  default     = "ALWAYS"
+}
+
+variable "availability_type" {
+  description = "The availability type for the master instance. Can be either `REGIONAL` or `null`."
+  type        = string
+  default     = "REGIONAL"
 }

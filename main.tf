@@ -12,11 +12,12 @@ resource "google_project_service" "compute_service" {
 resource "google_compute_network" "vpc_network" {
   name                    = "terraform-network"
   auto_create_subnetworks = false
-  delete_default_routes_on_create = true
+  delete_default_routes_on_create = false
   depends_on = [
     google_project_service.compute_service
   ]
 }
+
 
 resource "google_compute_subnetwork" "private_network" {
   name          = "private-network"
@@ -32,7 +33,9 @@ resource "google_compute_route" "private_network_internet_route" {
   priority    = 100
 }
 
-#may delete this
+
+
+# may delete this
 resource "google_compute_router" "router" {
   name    = "quickstart-router"
   network = google_compute_network.vpc_network.self_link
@@ -212,20 +215,44 @@ resource "google_compute_firewall" "load_balancer_inbound" {
 }
 
 
-#DB
-resource "google_sql_database" "database" {
-  name     = "my-database"
-  instance = google_sql_database_instance.instance.name
-}
-
-# See versions at https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#database_version
-resource "google_sql_database_instance" "instance" {
-  name             = "my-database-instance"
-  region           = "us-central1"
-  database_version = "MYSQL_8_0"
+# #DB
+resource "google_sql_database_instance" "cloudsql-instance-qa" {
+  
+  database_version = "MYSQL_5_7"
+  name             = "cloudsql-instance-qa-b"
+  project          = var.project_id
+  region           = var.region
+  deletion_protection = false
   settings {
-    tier = "db-f1-micro"
-  }
+    activation_policy = "ALWAYS"
+    availability_type = "ZONAL"
 
-  deletion_protection  = "true"
+    backup_configuration {
+      binary_log_enabled             = "true"
+      enabled                        = "true"
+      point_in_time_recovery_enabled = "false"
+      start_time                     = "15:00"
+    }
+
+    disk_autoresize        = "true"
+    disk_size              = "10"
+    disk_type              = "PD_SSD"
+
+    ip_configuration {
+      ipv4_enabled    = "true"
+     
+    }
+
+    location_preference {
+      zone = var.zone
+    }
+
+    maintenance_window {
+      day  = "7"
+      hour = "4"
+    }
+
+ tier             = "db-f1-micro"
+    
+  }
 }
