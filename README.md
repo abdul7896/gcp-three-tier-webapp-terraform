@@ -16,6 +16,8 @@ SQL
 Google Container Registry
 Cloud Build
 
+Service Account and Billing Alerts (£10/month) for the project have also been created 
+
 Screenshots
 
 ![image](https://user-images.githubusercontent.com/22668953/166552175-ab61aa6f-2210-4754-9469-f7f09d1c0a61.png)
