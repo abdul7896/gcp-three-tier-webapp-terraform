@@ -18,7 +18,6 @@ resource "google_compute_network" "vpc_network" {
   ]
 }
 
-
 resource "google_compute_subnetwork" "private_network" {
   name          = "private-network"
   ip_cidr_range = "10.2.0.0/16"
@@ -32,8 +31,6 @@ resource "google_compute_route" "private_network_internet_route" {
   next_hop_gateway = "default-internet-gateway"
   priority    = 100
 }
-
-
 
 # may delete this
 resource "google_compute_router" "router" {
