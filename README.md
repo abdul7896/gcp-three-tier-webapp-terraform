@@ -1,4 +1,3 @@
-http://35.210.64.225
 
 This is the Git repo of the Docker Image for hello-world. 
 
